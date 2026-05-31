@@ -1,0 +1,88 @@
+filebeat.inputs:
+  - type: filestream
+    id: ivis-app
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/26990cf8d8f25e1280e48f752ed7ceb62d76be5304c7237e16c823c398669c18/26990cf8d8f25e1280e48f752ed7ceb62d76be5304c7237e16c823c398669c18-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    fields_under_root: true
+    fields:
+      stack_name: ivisphotography
+      service_name: ivis-app
+
+  - type: filestream
+    id: ivis-web
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/ad15bbc5305762793905acda1caac234a0be27858459ade97ae670de08585d1a/ad15bbc5305762793905acda1caac234a0be27858459ade97ae670de08585d1a-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    fields_under_root: true
+    fields:
+      stack_name: ivisphotography
+      service_name: ivis-web
+
+  - type: filestream
+    id: ivis-backup
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/fed79c2e65d34e36f211cc55db13b0d200f9e9023d0ffbe3cdbf1a54491e9549/fed79c2e65d34e36f211cc55db13b0d200f9e9023d0ffbe3cdbf1a54491e9549-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    fields_under_root: true
+    fields:
+      stack_name: ivisphotography
+      service_name: ivis-backup
+
+  - type: filestream
+    id: teslamate-haproxy
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/b7a63b91d3a5d8709da0495b3dc55cc392f3e234b5bbd918683a3918a5fd3037/b7a63b91d3a5d8709da0495b3dc55cc392f3e234b5bbd918683a3918a5fd3037-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    fields_under_root: true
+    fields:
+      stack_name: teslamate
+      service_name: teslamate-haproxy
+
+  - type: filestream
+    id: teslamate-app
+    enabled: true
+    paths:
+      - /var/lib/docker/containers/dcc2463b1d7131b4908900bfba451f0e45cc98a8ed907241cf471e80d38a5ae3/dcc2463b1d7131b4908900bfba451f0e45cc98a8ed907241cf471e80d38a5ae3-json.log
+    parsers:
+      - container:
+          stream: all
+          format: docker
+    fields_under_root: true
+    fields:
+      stack_name: teslamate
+      service_name: teslamate
+
+processors:
+  - add_tags:
+      tags: ["docker", "home-observability"]
+  - add_fields:
+      target: ""
+      fields:
+        observer_stack: "elasticsearch"
+        observer_cluster: "ryan-observability"
+
+setup.ilm.enabled: false
+setup.template.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+  index: "app-logs-%{+yyyy.MM.dd}"
