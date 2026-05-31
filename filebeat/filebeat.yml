@@ -45,7 +45,7 @@ filebeat.inputs:
     id: teslamate-haproxy
     enabled: true
     paths:
-      - /var/lib/docker/containers/b7a63b91d3a5d8709da0495b3dc55cc392f3e234b5bbd918683a3918a5fd3037/b7a63b91d3a5d8709da0495b3dc55cc392f3e234b5bbd918683a3918a5fd3037-json.log
+      - /var/lib/docker/containers/edd15fe561bb1e338b176c32f99fce793dc6f950de2bc23a694e6b56f74e8dd5/edd15fe561bb1e338b176c32f99fce793dc6f950de2bc23a694e6b56f74e8dd5-json.log
     parsers:
       - container:
           stream: all
