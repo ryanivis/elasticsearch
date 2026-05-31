@@ -41,8 +41,17 @@ docker compose logs -f kibana
 docker compose logs -f filebeat
 ```
 
+Import or refresh the Kibana dashboards:
+
+```bash
+./ops/import-dashboards.sh
+```
+
 ## Notes
 
 - The shipper only keeps the named application logs, so it does not become a broad container vacuum.
 - `ops/deploy.sh` regenerates `filebeat/filebeat.yml` from the current Docker log paths before each start, so it keeps following the right containers after they are recreated.
 - The stack is sized to stay modest: single-node Elasticsearch, Kibana, and one Filebeat instance.
+- Kibana includes two security-focused dashboards:
+  - `HAProxy Security Watch`
+  - `Ivis Photography Security Watch`
