@@ -8,21 +8,29 @@ ELASTIC_PASSWORD="$(grep '^ELASTIC_PASSWORD=' "$ROOT_DIR/.env" | cut -d= -f2-)"
 
 cd "$ROOT_DIR"
 
+delete_status="$(
+  docker compose exec -T kibana sh -lc \
+    "curl -s -o /tmp/data-view-delete-response.json -w '%{http_code}' -u elastic:$ELASTIC_PASSWORD -X DELETE http://127.0.0.1:5601/api/data_views/data_view/app-logs-data-view -H 'kbn-xsrf:true'"
+)"
+
+if [[ "$delete_status" != "200" && "$delete_status" != "404" ]]; then
+  response_body="$(docker compose exec -T kibana cat /tmp/data-view-delete-response.json)"
+  echo "Data view delete failed with HTTP $delete_status" >&2
+  echo "$response_body" >&2
+  exit 1
+fi
+
 status_code="$(
   docker compose exec -T kibana sh -lc \
     "curl -s -o /tmp/data-view-response.json -w '%{http_code}' -u elastic:$ELASTIC_PASSWORD -X POST http://127.0.0.1:5601/api/data_views/data_view -H 'kbn-xsrf:true' -H 'Content-Type: application/json' --data-binary @-" \
     < "$DATA_VIEW_FILE"
 )"
 
-if [[ "$status_code" != "200" && "$status_code" != "409" ]]; then
+if [[ "$status_code" != "200" ]]; then
   response_body="$(docker compose exec -T kibana cat /tmp/data-view-response.json)"
-  if [[ "$status_code" == "400" && "$response_body" == *"Duplicate data view"* ]]; then
-    :
-  else
-    echo "Data view creation failed with HTTP $status_code" >&2
-    echo "$response_body" >&2
-    exit 1
-  fi
+  echo "Data view creation failed with HTTP $status_code" >&2
+  echo "$response_body" >&2
+  exit 1
 fi
 
 docker compose exec -T kibana sh -lc \

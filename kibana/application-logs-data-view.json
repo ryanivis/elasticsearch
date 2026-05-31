@@ -33,7 +33,7 @@
       "risk_signal": {
         "type": "keyword",
         "script": {
-          "source": "def msg = params._source['message']; if (msg == null) return; def lower = msg.toLowerCase(); def high = lower.contains('connection refused') || lower.contains('no server available') || lower.contains('ssl handshake failure') || lower.contains('[alert]') || lower.contains('[err]') || lower.contains('traceback') || lower.contains('exception') || lower.contains('\\\"outcome\\\": \\\"failed\\\"'); if (high) { emit('high'); return; } def reviewStatus = /\\\" (401|403|404|429|500|502|503) /.matcher(msg).find(); def review = lower.contains('[warning]') || lower.contains('/admin') || lower.contains('\\\"event_type\\\": \\\"admin_') || reviewStatus; if (review) { emit('review'); return; } emit('normal');"
+          "source": "def msg = params._source['message']; if (msg == null) return; def lower = msg.toLowerCase(); def high = lower.contains('connection refused') || lower.contains('no server available') || lower.contains('ssl handshake failure') || lower.contains('[alert]') || lower.contains('[err]') || lower.contains('traceback') || lower.contains('exception') || lower.contains('\"outcome\": \"failed\"'); if (high) { emit('high'); return; } def reviewStatus = /\\\" (401|403|404|429|500|502|503) /.matcher(msg).find(); def review = lower.contains('[warning]') || lower.contains('/admin') || lower.contains('\"event_type\": \"admin_') || reviewStatus; if (review) { emit('review'); return; } emit('normal');"
         }
       }
     }
