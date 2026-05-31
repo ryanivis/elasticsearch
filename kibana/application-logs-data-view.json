@@ -2,9 +2,10 @@
   "data_view": {
     "id": "app-logs-data-view",
     "name": "Application Logs",
-    "title": "app-logs-*",
+    "title": ".ds-app-logs-*",
     "timeFieldName": "@timestamp",
     "allowNoIndex": true,
+    "allowHidden": true,
     "runtimeFieldMap": {
       "http_status": {
         "type": "long",
