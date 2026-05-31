@@ -22,19 +22,19 @@
       "app_event_type": {
         "type": "keyword",
         "script": {
-          "source": "def msg = params._source['message']; if (msg == null) return; def m = /\\\"event_type\\\": \\\"([^\\\"]+)\\\"/.matcher(msg); if (m.find()) emit(m.group(1));"
+          "source": "def msg = params._source['message']; if (msg == null) return; def m = /event_type\": \"([^\"]+)\"/.matcher(msg); if (m.find()) emit(m.group(1));"
         }
       },
       "app_outcome": {
         "type": "keyword",
         "script": {
-          "source": "def msg = params._source['message']; if (msg == null) return; def m = /\\\"outcome\\\": \\\"([^\\\"]+)\\\"/.matcher(msg); if (m.find()) emit(m.group(1));"
+          "source": "def msg = params._source['message']; if (msg == null) return; def m = /outcome\": \"([^\"]+)\"/.matcher(msg); if (m.find()) emit(m.group(1));"
         }
       },
       "risk_signal": {
         "type": "keyword",
         "script": {
-          "source": "def msg = params._source['message']; if (msg == null) return; def lower = msg.toLowerCase(); def high = lower.contains('connection refused') || lower.contains('no server available') || lower.contains('ssl handshake failure') || lower.contains('[alert]') || lower.contains('[err]') || lower.contains('traceback') || lower.contains('exception') || lower.contains('\"outcome\": \"failed\"'); if (high) { emit('high'); return; } def reviewStatus = /\\\" (401|403|404|429|500|502|503) /.matcher(msg).find(); def review = lower.contains('[warning]') || lower.contains('/admin') || lower.contains('\"event_type\": \"admin_') || reviewStatus; if (review) { emit('review'); return; } emit('normal');"
+          "source": "def msg = params._source['message']; if (msg == null) return; def lower = msg.toLowerCase(); def high = lower.contains('connection refused') || lower.contains('no server available') || lower.contains('ssl handshake failure') || lower.contains('[alert]') || lower.contains('[err]') || lower.contains('traceback') || lower.contains('exception') || (lower.contains('outcome') && lower.contains('failed')); if (high) { emit('high'); return; } def reviewStatus = /\" (401|403|404|429|500|502|503) /.matcher(msg).find(); def review = lower.contains('[warning]') || lower.contains('/admin') || lower.contains('event_type') && lower.contains('admin_') || reviewStatus; if (review) { emit('review'); return; } emit('normal');"
         }
       }
     }
