@@ -1,3 +1,7 @@
 .env
 .DS_Store
 *.swp
+
+# Local backups. These include old credentials and must stay off GitHub.
+decommission-backups/
+compose.elastic-host.old.yml
